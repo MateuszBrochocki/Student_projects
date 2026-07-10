@@ -1,15 +1,17 @@
-# Wizualizacja dotycząca transportu kolejowego pasażerskiego w Polsce
+# Poster about James Bond movies
 
-## Opis i screeny
+## Description
 
-Aplikacja podzielona jest na trzy zakładki. Pierwsza z nich opisuje sytuację kolei z podziałem na województwa. Druga odnosi się linii kolejowych, zaś trzecia do opóźnień. Każda z nich zawiera interaktywne wykresy umożliwiające pogłębioną eksplorację danych.
+A poster covering the 25th James Bond film series. It depicts the various connections between events in the film, as well as the technical aspects of filmmaking. The poster also features statistics on the plot and the most common car brands featured in the film series. All data was processed and visualized in R and the poster itself was created in Canva.
 
-![Zrzut3](Zrzut3.png)
+## Authors
+Mateusz Brochocki, Michał Dębski, Aleksander Karch
 
-![Zrzut4](Zrzut4.png)
+## Sources
 
-![Zrzut1](Zrzut1.png)![Zrzut2](Zrzut2.png)
-
-## Źródła
-
-Dane czerpaliśmy ze strony Urzędu Transportu Kolejowego: https://dane.utk.gov.pl/
+- https://en.wikipedia.org/wiki/List_of_James_Bond_film_locations
+- https://en.wikipedia.org/wiki/List_of_James_Bond_films
+- https://en.wikipedia.org/wiki/Bond_girl
+- https://www.theguardian.com/film/datablog/james-bond-bodycount-deaths
+- https://editorial.rottentomatoes.com/guide/james-bond-movies-in-order/v
+- https://en.wikipedia.org/wiki/List_of_James_Bond_vehicles
