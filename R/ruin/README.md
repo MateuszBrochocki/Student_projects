@@ -1,15 +1,8 @@
-# Wizualizacja dotycząca transportu kolejowego pasażerskiego w Polsce
+# Calculating the insurer's probability of ruin
 
-## Opis i screeny
+## Description 
 
-Aplikacja podzielona jest na trzy zakładki. Pierwsza z nich opisuje sytuację kolei z podziałem na województwa. Druga odnosi się linii kolejowych, zaś trzecia do opóźnień. Każda z nich zawiera interaktywne wykresy umożliwiające pogłębioną eksplorację danych.
+The aim of the project was to calculate the probability of ruin for an insurer depending on the distribution of losses, the value of the premium and the insurer's initial surplus. The simulations were performed using R. The details and results of the project are described in the report.
 
-![Zrzut3](Zrzut3.png)
-
-![Zrzut4](Zrzut4.png)
-
-![Zrzut1](Zrzut1.png)![Zrzut2](Zrzut2.png)
-
-## Źródła
-
-Dane czerpaliśmy ze strony Urzędu Transportu Kolejowego: https://dane.utk.gov.pl/
+## Authors
+Mateusz Brochocki, Adrian Krzyżanowski
