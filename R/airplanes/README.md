@@ -1,15 +1,16 @@
-# Wizualizacja dotycząca transportu kolejowego pasażerskiego w Polsce
+# Data analysis and visualization of air traffic in the US from 2001 to 2007
 
-## Opis i screeny
+## Description
 
-Aplikacja podzielona jest na trzy zakładki. Pierwsza z nich opisuje sytuację kolei z podziałem na województwa. Druga odnosi się linii kolejowych, zaś trzecia do opóźnień. Każda z nich zawiera interaktywne wykresy umożliwiające pogłębioną eksplorację danych.
+Analysis and visualization of many aspects of air traffic, including cancellations, delays, traffic volumes and airlines in the US from 2001 to 2007. Project was made in R.
 
-![Zrzut3](Zrzut3.png)
+## Authors
 
-![Zrzut4](Zrzut4.png)
+Mateusz Brochocki, Michał Dębski, Adrian Krzyżanowski
 
-![Zrzut1](Zrzut1.png)![Zrzut2](Zrzut2.png)
+## Sources 
 
-## Źródła
-
-Dane czerpaliśmy ze strony Urzędu Transportu Kolejowego: https://dane.utk.gov.pl/
+- https://aspm.faa.gov/aspmhelp/index/ASQP__Carrier_Codes_and_Names.html
+- https://en.wikipedia.org/wiki/Trans_World_Airlines
+- https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/HG7NV7
+- https://ourairports.com/data/)
