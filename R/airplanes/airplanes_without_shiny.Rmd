@@ -1,0 +1,533 @@
+---
+title: "Analiza lotów w USA w latach 2001-2007"
+---
+
+
+# Odwołane loty
+
+```{r warning=FALSE,echo=F}
+library(data.table)
+library(ggplot2)
+library(shiny)
+library(maps)
+library(mapdata)
+skr <- state.abb
+name <- tolower(state.name)
+usa <- map_data("state")
+state_t <- data.table(cbind(skr,name))
+df1 <- fread("2001.bz2")
+df2 <- fread("2002.bz2")
+df3 <- fread("2003.bz2")
+df4 <- fread("2004.bz2")
+df5 <- fread("2005.bz2")
+df6 <- fread("2006.bz2")
+df7 <- fread("2007.bz2")
+aiports <- fread("airports.csv")
+aiports <- aiports[,c("iata","airport","state")]
+.df <- rbind(df1,df2,df3,df4,df5,df6,df7)
+dfo <- rbind(df4,df5,df6,df7)
+```
+
+```{r echo=F,warning=FALSE,fig.align='center',fig.width=7,fig.height=8}
+can <- .df[Cancelled==1,.(Cancelled=.N),by=Month]
+p <- ggplot(can,aes(x=Month,y=Cancelled))
+p <- p+geom_col(fill =
+c(rep("green",8),"red",rep("green",3)))+scale_x_continuous(breaks = 1:12, labels = 1:12)+labs(title = "Odwołane w latach 2001-2007")+theme(plot.title = element_text(hjust=0.5,size=16,face="bold"))
+p
+```
+
+```{r,echo=F,results='asis'}
+suma1 <- .df[Cancelled==1,.(Cancelled=.N),by=Year]
+suma2 <- .df[,.N,by=Year]
+suma <- merge.data.table(suma1,suma2)
+suma <- suma[,`:=`(Cancelled_percent=round((Cancelled/N)*100,2),N=NULL)]
+knitr::kable(suma)
+suma3 <- .df[Cancelled==1&Year!=2001,.(Cancelled=.N),by=Year]
+suma4 <- .df[Year!=2001,.N,by=Year]
+cat("W sumie w latach 2001-2007 odwołano",sum(suma1[,Cancelled]), "lotów, co stanowi",round(sum(suma1[,Cancelled])/sum(suma2[,N])*100,2),"% wszystkich lotów.")
+cat("\n")
+cat("W latach 2002-2007 odwołano",sum(suma3[,Cancelled]),"lotów, co stanowi",round(sum(suma3[,Cancelled])/sum(suma4[,N])*100,2),"% wszystkich lotów.")
+```
+
+```{r echo=F,warning = FALSE,fig.align='center',fig.width=7,fig.height=8}
+can <- df1[Cancelled==1,.(Cancelled=.N),by=Month]
+p <- ggplot(can,aes(x=Month,y=Cancelled))
+p <- p+geom_col(fill =
+c(rep("green",8),"red",rep("green",3)))+scale_x_continuous(breaks = 1:12, labels = 1:12)+labs(title = "Odwołane w 2001 roku")+theme(plot.title = element_text(hjust=0.5,size=16,face="bold"))
+p
+can2 <- df1[Cancelled==1&Month==9,.(Cancelled=.N),by=DayofMonth]
+setorder(can2)
+plot(can2[,DayofMonth],can2[,Cancelled],xlab="Day of month",ylab="Cancelled",yaxt="n",xaxt="n",col=c(rep("black",10),rep("red",3),rep("orange",3),rep("yellow",11),rep("black",3)),pch=16)
+axis(1,at=c(1,5,10,15,20,25,30))
+axis(2,at=c(0,5000,10000,15000,20000,max(can2[,Cancelled])))
+title("Odwołane we wrześniu 2001")
+```
+
+## Odwołania względem dnia tygodnia (w latach 2001-2007)
+
+```{r,echo=F,fig.align='center'}
+canw <- .df[Cancelled==1,.(Cancelled=.N),by=DayOfWeek]
+setorder(canw)
+p <- ggplot(canw,aes(x=DayOfWeek,y=Cancelled))
+p <- p+geom_col()+geom_col(fill =
+c("orange","red","red","red","orange","yellow","yellow"))+ scale_x_continuous(breaks = 1:7, labels = 1:7)+xlab("Day of week")
+p
+canw2 <- .df[,.(Number=.N),by=DayOfWeek]
+canw3 <- merge.data.table(canw,canw2)
+canw3 <- canw3[,Cancelled_percent:=round(Cancelled/Number*100,2)]
+knitr::kable(canw3)
+```
+
+## Odwołania a lotniska (w latach 2001-2007)
+
+```{r echo=F, fig.align='center', fig.height=7, message=FALSE, warning=FALSE, results='asis'}
+dfa <- merge.data.table(.df,aiports,by.x = "Origin",by.y = "iata")
+dfac <- dfa[,.(Number=.N),by="airport"]
+dfac2 <- dfa [Cancelled==1,.(Cancelled=.N),by="airport"]
+cat("Loniska z największą liczbą odwołanych lotów:")
+setorder(dfac2,-Cancelled)
+knitr::kable(head(dfac2))
+dfac3 <- merge.data.table(dfac,dfac2,by="airport")
+dfac3 <- dfac3[,Cancelled_percent:=round(Cancelled/Number*100,2)]
+setorder(dfac3,-Cancelled_percent)
+dfac3 <- dfac3[Number>1000,]
+cat("Lotniska z procentowo największą liczbą odwołanych lotów:")
+knitr::kable(head(dfac3))
+boxplot(dfac3[,Cancelled_percent],yaxt="n",col="lightblue")
+points(1,mean(dfac3[,Cancelled_percent]),pch=16,col="black")
+axis(2,at=c(0,median(dfac3[,Cancelled_percent]),5,10,15,20))
+dfas <- dfa[,.(Number=.N),by="state"]
+dfas2 <- dfa[Cancelled==1,.(Cancelled=.N),by="state"]
+dfas3 <- merge.data.table(dfas,dfas2,by="state")
+dfas3 <- dfas3[,Cancelled_percent:=round(Cancelled/Number*100,2)]
+setorder(dfas3,-Cancelled_percent)
+stany <- merge.data.table(state_t,dfas3,by.x="skr",by.y="state")
+```
+
+```{r,echo=F, fig.align='center', fig.height=7, warning=FALSE,fig.width=9.5,results='asis'}
+p <- ggplot()+
+  geom_map(data = usa, map = usa,
+           aes(x = long, y = lat, map_id = region),
+           fill = "white", color = "black")+geom_map(data = stany, map = usa,
+           aes(fill = Cancelled_percent, map_id = name),
+           color = "black") +
+  scale_fill_gradient(low = "blue", high = "red") +theme_void()+labs(title="Mapa ciepła pokazująca procent odwołanych lotów w danym stanie")+theme(plot.title = element_text(hjust=0.5,size=16,face="bold"))
+p
+cat("Stany z procentowo największą liczbą odwołanych lotów:")
+knitr::kable(head(dfas3))
+```
+
+## Przyczyny odwołań w latach 2004-2007
+
+```{r echo=F ,warning=F,fig.align='center'}
+ p <- dfo[Cancelled==1,.N,by=CancellationCode]
+ pie(p[,N],labels=c("weather","NAS","carrier","security"),main="Powody odwołania lotów w latach 2004-2007",col=2:6)
+```
+
+```{r echo=F ,warning=F,fig.align='center',results='asis',fig.height=6}
+ can4 <- dfo[Cancelled==1,.(Cancelled=.N),by=Month]
+ p <- ggplot(can4,aes(x=Month,y=Cancelled))
+ p <- p+geom_col(fill =
+ c("red","red","orange",rep("green",2),rep("orange",4),rep("green",2),"red"))+scale_x_continuous(breaks = 1:12, labels = 1:12)+labs(title = "Odwołane w latach 2004-2007")+theme(plot.title = element_text(hjust=0.5,size=16,face="bold"))
+p
+ df4m <- dfo[,.(Number=.N),by=Month]
+ df4m2 <- merge.data.table(df4m,can4)
+ df4m2 <- df4m2[,Cancelled_percent:=round(Cancelled/Number*100,2)]
+ cat("Odwołane loty w latach 2004-2007 w poszczególnych miesiącach:")
+ knitr::kable(df4m2)
+ .df4c <- dfo[Cancelled==1&CancellationCode=="A",.(Cancelled=.N),by=Month]
+ .df4w <- dfo[Cancelled==1&CancellationCode=="B",.(Cancelled=.N),by=Month]
+ .df4n <- dfo[Cancelled==1&CancellationCode=="C",.(Cancelled=.N),by=Month]
+```
+
+
+### **Tutaj będzie wykres z shiny**
+
+
+```{r eval=FALSE, warning=FALSE, include=FALSE}
+ server <- function(input,output){
+   selected_plot <- reactive({
+     if(input$plot_type=="przewoźnik"){
+ p <- ggplot(.df4c,aes(x=Month,y=Cancelled))
+ p <- p+geom_col(fill =
+ "green")+scale_x_continuous(breaks = 1:12, labels = 1:12)+labs(title = "Odwołane w latach 2004-2007 z powodu przewoźnika")+theme(plot.title = element_text(hjust=0.5,size=16,face="bold"))
+ p
+     }
+     else if (input$plot_type=="pogoda"){
+ p <- ggplot(.df4w,aes(x=Month,y=Cancelled))
+ p <- p+geom_col(fill =
+ c("skyblue","skyblue",rep("green",6),"darkblue","green","green","skyblue"))+scale_x_continuous(breaks = 1:12, labels = 1:12)+labs(title = "Odwołane w latach 2004-2007 z powodu pogody")+theme(plot.title = element_text(hjust=0.5,size=16,face="bold"))
+ p
+     }
+     else if (input$plot_type=="NAS"){
+ p <- ggplot(.df4n,aes(x=Month,y=Cancelled))
+ p <- p+geom_col(fill =
+ "green")+scale_x_continuous(breaks = 1:12, labels = 1:12)+labs(title = "Odwołane w latach 2004-2007 z powodu NAS")+theme(plot.title = element_text(hjust=0.5,size=16,face="bold"))
+ p
+     }
+
+   })
+    output$plot <- renderPlot({
+     selected_plot()
+   })
+ }
+
+ ui <- fluidPage(titlePanel("Wybór wykresu:"),sidebarLayout(sidebarPanel(selectInput("plot_type","Przyczyna:",choices=c("przewoźnik","pogoda","NAS"))),mainPanel(
+       plotOutput("plot"))))
+
+shinyApp(ui=ui,server = server)
+```
+
+
+# Który przewoźnik prezentuje się najlepiej?
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+rm(list=ls())
+library(data.table)
+library(ggplot2)
+library(shiny)
+library(maps)
+library(mapdata)
+dane <-.df
+```
+
+## Legenda - skróty przewoźników:
+9E - Endeavor Air, 
+AA - American Airlines,
+AQ - Aloha Airlines,
+AS - Alaska Airlines,
+B6 - Jetblue Airways Corporation,
+CO - Continental Airlines,
+DH - Atlantic Coast Airlines,
+DL - Delta Air Lines, Inc., 
+EV - ExpressJet Airlines,
+F9 - Frontier Airlines, Inc., 
+FL - AirTran Airways,
+HA - Hawaiian Airlines Inc.,
+HP - America West Airlines,
+MQ - Envoy Air,
+NW - Northwest Airlines,
+OH - Comair,
+OO - Skywest Airlines,
+TW - Trans World Airlines (do 2001),
+TZ - ATA Airlines,
+UA - United Airlines, Inc., 
+US - US Airways,
+WN - Southwest Airlines, 
+XE - JSX (JetSuiteX),
+YV - Mesa Airlines.
+
+
+## 1. Średnie opóźnienia wylotów i przylotów przewoźników
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+funkcja1 <- function(dane){
+  przyloty<-dane[, list(przylotów=round(mean(ArrDelay, na.rm=TRUE), digits = 2)), by=UniqueCarrier]
+  wyloty<-dane[, list(wylotów=round(mean(DepDelay, na.rm=TRUE), digits = 2)), by=UniqueCarrier]
+  razem<- wyloty[przyloty, on="UniqueCarrier", nomatch=0]
+  do_wykresu<- melt(razem, id.vars = "UniqueCarrier")
+  wykres<- ggplot(do_wykresu, aes(x=UniqueCarrier, y=value, fill=variable))
+  wykres<- wykres+geom_bar(stat="identity", position = "dodge",)
+  wykres <- wykres+labs(x="Nazwa przewoźnika", y="Średni czas opóźnienia (min)", fill="Legenda", title="Opóźnienia przewoźników")
+  wykres <- wykres+scale_y_continuous(breaks = seq(-1.5, 14, by = 0.5))
+  wykres
+}
+funkcja1(dane)
+```
+
+Można zauważyć, że najlepiej wypadają przewoźniki HA (Hawaiian Airlines Inc.) i AQ (Aloha Airlines). Z czego HA ma ujemną srednią opoźnień, co oznacza, że samoloty średnio przybywały i wylatywały za wcześnie. Niskie średnie opóźnień mogą być spowodowane tym, że ci przewoźnicy mieli najmniejszą liczbę lotów. Natomiast najgorzej prezentują się YV (Mesa Airlines) oraz EV (ExpressJet Airlines).
+
+
+## 2. Procent odwołanych lotów z powodu przewoźnika
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+funkcja2 <- function(dane){
+  odwołania <- dane[Cancelled==1 & is.na(CancellationCode)==FALSE, list(ile=length(Year)), by=c("UniqueCarrier", "CancellationCode")][order(UniqueCarrier)]
+  suma_odwołań <- odwołania[, list(suma=sum(ile)), by=UniqueCarrier]
+  odwołania_z_powodu_A <- odwołania[CancellationCode=="A"]
+  merged<- suma_odwołań[odwołania_z_powodu_A, on="UniqueCarrier", nomatch=0]
+  wynik<-merged[, list(ułamek=100*round(ile/suma, digits = 3)), by=UniqueCarrier]
+  library(ggplot2)
+  wykres2<- ggplot(wynik, aes(x=UniqueCarrier, y=ułamek))
+  wykres2<- wykres2+geom_col(fill="lightgreen", color="black")
+  wykres2 <- wykres2+labs(x="Przewoźnik", y="Procent odwołań z powodu przewoźnika", title="Odwołania lotów")
+  wykres2<-wykres2+scale_y_continuous(breaks = seq(0, 100, by = 5))
+  wykres2
+}
+funkcja2(dane)
+```
+
+Uwaga: brak danych dla TW (Trans World Airlines), gdyż lnia lotnicza ogłosiła bankructwo w 2001 i brakuje jakichkolwiek lotów po 2001.
+
+Jeśli chodzi o odwołania lotów z powodu przewoźnika to najlepiej wypada
+XE (ExpressJet Airlines) z wynikiem około 8.5%. Drugie miejsce zajmują
+CO (Continental Airlines), około 22.5%, a zaraz po nich F9 (Frontier Airlines)
+z 1/4 odwołanych lotów przez przewoźnków.
+
+Natomiast najgorzej wypadają AQ i HA, gdzie ponad 90% odwołanych lotów było
+z przyczyny przewoźnika. Warto wziąć jednak pod uwagę, że te linie miały
+najmniej odwołanych lotów łącznie.
+
+
+## 3. Liczba zmienionych tras lotów
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+funkcja3 <- function(dane){
+  liczba_lotów<-dane[, list(liczba=length(Year)), by=UniqueCarrier]
+  ilość_Diverted<- dane[Diverted==1, list(ile=length(Year)), by=UniqueCarrier]
+  max_liczba_lotów<-max(liczba_lotów$liczba)
+  łącznie<- liczba_lotów[ilość_Diverted, on="UniqueCarrier", nomatch=0]
+  do_analizy<- łącznie[, list(ile_Div=ceiling(ile*(max_liczba_lotów/liczba))), by=UniqueCarrier]
+  library(ggplot2)
+  wykres3<-ggplot(do_analizy, aes(x="", y=ile_Div, fill=UniqueCarrier))
+  wykres3<-wykres3+geom_bar(stat="identity", color="black") +coord_polar("y")+theme_void()
+  wykres3<- wykres3+labs(fill="Przewoźnik", title = "Liczba przekierowanych lotów")
+  wykres3
+}
+funkcja3(dane)
+```
+
+Ponieważ każdy przewoźnik ma różną liczbę lotów, to dane przekierowanych lotów
+zostały odpowiednio przeskalowane do maksymalnej liczby lotów.
+
+Tutaj ponownie najlepiej wypadają linie HA i AQ, które miały najmniej przekierowanych
+lotów. Nieco gorzej radzi sobie TZ (ATA Airlines).
+Natomiast najgorzej prezentuje się sytuacja, jeśli chodzi o linie 
+B6 (Jetblue Airways Corporation) i XE (JetSuiteX). Warto jednak dodać, że 
+przewoźnicy ci znajdują się odpowiednio na 17 i 10 miejscu, jeśli chodzi
+o największą liczbę lotów, więc liczba lotów niekoniecznie musi 
+wpływać na liczbę przekierowanych lotów.
+
+
+## 4. Średnie opóźnień z powodu przewoźnika
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+funkcja4 <- function(dane){
+  srednia_ogólnie <- dane[UniqueCarrier!="TW", list("średnia ogólna"=round(mean(CarrierDelay, na.rm=TRUE), digits = 2)), by=UniqueCarrier]
+  srednia_pt_pn<- dane[UniqueCarrier!="TW" & (DayOfWeek==5 | DayOfWeek==1), list("średnia z pt. i pon."=round(mean(CarrierDelay, na.rm=TRUE), digits = 2)), by=UniqueCarrier]
+  razem <- srednia_ogólnie[srednia_pt_pn, on ="UniqueCarrier", nomatch=0]
+  razem$`średnia z pt. i pon.`  <- razem$`średnia z pt. i pon.`*(-1)
+  do_wykresu<- melt(razem, id.vars = "UniqueCarrier")
+  krańce <- seq(-7, 7, 1)
+  lable = as.character(c(seq(7, 0, -1), seq(1, 7, 1)))
+  library(ggplot2)
+  wykres<- ggplot(do_wykresu, aes(reorder(UniqueCarrier, value), value, fill=variable))
+  wykres <- wykres+geom_bar(stat="identity") + scale_y_continuous(breaks = krańce,  labels = lable)
+  wykres<- wykres+coord_flip() + labs(x="Nazwa przewoźnika", y="Średni czas opóźnienia (min)", fill="Legenda", title="Opóźnienia z powodu przewoźników")
+  wykres<- wykres+scale_fill_manual(values=c("#FF3333", "yellowgreen"))
+  wykres
+}
+
+funkcjad <- function(dane){
+  tabela<- dane[, list(ile=length(Year)), by=DayOfWeek][order(DayOfWeek)]
+  tabela<- tabela[, DayOfWeek:=c("pon.", "wt.", "śr.", "czw.", "pt.", "sob.", "nd.")]
+  tabela<- tabela[order(-ile)]
+  tabela
+}
+funkcja4(dane)
+knitr::kable(funkcjad(dane))
+```
+
+Ponieważ, jak wynika z tabeli, ludzie najchętniej latają w piątek i poniedziałek,
+więc średnia łączna została zestawiona ze średnią w te dni. W ten sposób można 
+dowiedzieć się, czy przewoźnicy radzą sobie gorzej z większym natężeniem ruchu.
+
+Widzimy tutaj, że średnia z piątku i poniedziałku jest przeważnie nieco wyższa
+niż ta z całego tygodnia. Stąd odpowiedź jest tak, ale nieznacznie.
+
+Najmniejszy średni czas opóźnienia z powdou przewoźnika ma WN (Southwest Airlines)
+w obu kategoriach. Patrząc na średnią ogólną to kolejnymi przewoźnikami są
+AQ, FL (AirTran Airways) i HA. Jednak porównując po średniej tylko z piątku i 
+poniedziałku kolejność wygląda następująco: HA, AQ, FL.
+Natomiast największe opóźnienia mają przewoźniki EV (ExpressJet Airlines) i
+YV (Mesa Airlines) kolejno, zarówno ogólnie jak i w te dwa dni.
+
+## Podsumowanie:
+
+Z powyższych rozważań wynika, że najlepiej prezentują się linie AQ (Aloha Airlines)
+oraz HA (Hawaiian Airlines Inc.). Jednak warto wziąć pod uwagę, że ci przewoźnicy
+mają niewielką liczbę lotów w porównaniu z innymi (1 i 3 miejsca od końca odpowiednio)
+oraz jeśli samoloty tych lini są odwoływane to najczęściej jest to wina tych oto
+przewoźników.
+
+```{r message=FALSE, warning=FALSE, ,echo=F}
+rm(list=ls())
+#wczytywanie
+library(shiny)
+library(data.table)
+library('R.utils')
+library(ggplot2)
+library(maps)
+library(mapdata)
+flights<-.df
+airports<-fread('airports2.csv')
+regions<-fread('regions.csv')
+airregion<- merge.data.table(regions,airports,by.x='code',by.y='iso_region',all.x =F, all.y = T)
+flights[,Distance_km:=Distance*1.609344] 
+flights[,AirTime_h:=AirTime/60]
+#dodaje kolumne predkosc 
+flights[,v:=Distance_km/AirTime_h]
+set(flights, which(!is.finite(flights$v)), "v", NA)
+flights[,m_v:=mean(v,na.rm=T),by=TailNum]
+us_states <- map_data("state")
+state_labels <- unique(us_states$region)
+
+#tutaj zmienione przez to, ze shiny nie moze byc w pdf...
+#wczytywanie dwoch parametrow
+x<-2001
+#odpowiadajacy za rok 
+y<-1
+#odpowieadajacy za miesiac 
+
+```
+
+
+
+**Nastepujace wykresy sa wykonane w shiny, jednak niestety, 'demonstracja' dopiero bedzie mozliwa w trakcie trwania prezentacji**
+
+## **1) Najszybsze samoloty w latach 2001-2007**
+>Sprawdzamy po sredniej predkosci dla kazdego samolotu
+
+
+```{r echo=FALSE}
+
+    dt<-flights[Year %in% x,.(TailNum,m_v)]
+    dt<-unique(dt)
+    dt<-dt[order(m_v,decreasing = T)]
+    dt<-head(dt,10)
+    dt<-dt[,TailNum:=substring(TailNum,1,4)]
+    g<-ggplot(dt,aes(y=m_v,x=TailNum,fill=m_v))
+    g+geom_bar(stat='identity',position='dodge')+scale_fill_gradient(low = "lightgreen", high = "skyblue")
+
+```
+
+
+## **Tabela ze skrotami przewoznikow**
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+
+
+dane1<-cbind(c('9E','AA','AQ','AS','B6','CO','DH','DL','EV','F9','FL','HA','HP','MQ','NW','OH','OO','TW','TZ','UA','US','WN','XE','YV'),
+c('Endeavor Air','American Airlines','Aloha Airlines','Alaska Airlines','Jetblue Airways Corporation','Continental Airlines','Atlantic Coast Airlines','Delta Air Lines', 'ExpressJet Airlines','Frontier Airlines', 'AirTran Airways','Hawaiian Airlines','America West Airlines','Envoy Air','Northwest Airlines','Comair,Skywest Airlines','Trans World Airlines (do 2001)','ATA Airlines','United Airlines','US Airways',' Southwest Airlines', 'JSX (JetSuiteX)','Mesa Airlines'))
+knitr::kable(dane1, align = 'l')
+```
+
+
+## **2) Liczba lotow dla kazdego przewoznika w poszczegolnych latach 2001-2007**
+
+```{r,echo=F}
+    dt1<-flights[Year %in%  x,.(FlightCount=.N),by=.(UniqueCarrier)]
+    dt1<-dt1[order(FlightCount,decreasing=T)]
+    odp<-dt1[,.(UniqueCarrier,FlightCount)]
+    odp<-odp[order(FlightCount,decreasing = T)]
+    p<-ggplot(odp,aes(y=FlightCount,x=UniqueCarrier,fill=FlightCount))
+    p+geom_bar(stat='identity',position='dodge')+scale_fill_gradient(low = "skyblue", high = "navy")
+ 
+```
+
+## **3) Punktualnosc przewoznikow w latach 2001-2007 (w shiny)**
+>Dla kazdego z przewoznikow mamy dokladna analize tego jak punktualni byli w poszczegolnych latach oraz miesiacach  
+
+```{r,echo=F}
+
+    dt2<-flights[Year %in% x& Month %in%y,.(ArrDelay,UniqueCarrier)]
+    dt2<-dt2[,.(MeanDelay=mean(ArrDelay,na.rm=T)),by=UniqueCarrier]
+    dt2<-dt2[order(MeanDelay,decreasing = F)]
+    g<-ggplot(dt2,aes(y=MeanDelay,x=UniqueCarrier,fill=MeanDelay))
+    g+geom_bar(stat='identity',position='dodge')+scale_fill_gradient(low = "lightgrey", high = "skyblue")+coord_flip()
+  
+
+```
+
+## **4) Jakich polaczen bylo najwiecej w latach 2001-2007 (w shiny)?**
+>Przedstawione dane dotycza najczestszych polaczen miedzy lotniskami w USA w styczniu 2001r.
+
+```{r, echo=F}
+
+    dt5<- flights[Year %in%x & Month %in% y,.(Flights=.N),by=.(Origin,Dest)]
+    dt5<-dt5[order(Flights,decreasing = T)]
+  
+    dt5<-dt5[,flight:=paste(Origin,Dest)]
+    dt5<-dt5[,flight:=lapply(strsplit(flight, " "), sort)]
+    dt5<-dt5[,.(Flights,flight)]
+    
+    dt5[,c("lot1", "lot2") := tstrsplit(flight, ",", fixed = TRUE)]
+    dt5[,flight:=NULL]
+    dt5<-dt5[,.(flight_num=sum(Flights)), by=.(lot1, lot2)]
+    dt5<- head(dt5,10)
+    dt5[,lot1:= substr(lot1,4,6)]
+    dt5[,lot2 := substr(lot2,3,5)]
+    dt5<-dt5[,connection:=paste(lot1,lot2,sep='-')]
+    dt5<-dt5[,.(flight_num,connection)]
+    g<-ggplot(dt5,aes(y=flight_num,x=connection,fill=flight_num))
+    g+geom_bar(stat='identity',position='dodge')+scale_fill_gradient(low = "yellow", high = "red")+coord_flip()
+
+```
+
+## **5)Nowym Jorku - Lotniska 2001-2007 (w shiny) **
+>W przedstawionym zestawieniu mamy ilosc lotow (krajowych) w latach 2001-2007 oraz w poszczegolnych miesiacach.
+
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+
+dane <- cbind(c('JFK','EWR','LGA'),c('Lotnisko Kennedy’ego – John F. Kennedy International Airport','Port Lotniczy Newark-Liberty','Lotnisko La Guardia'))
+knitr::kable(dane, align = 'l')
+```
+
+**Ciekawostka:**
+JFK jest najwiekszym lotniskiem w Nowym Jorku, jednak lotow krajowych ma najmniej w Nowym Jorku
+
+
+
+```{r,echo=F ,message=FALSE, warning=FALSE, r,echo=F}
+    dt6<- flights[Origin%in% c('LGA','JFK','EWR') &Year %in% x& Month %in% y]
+    dt6<-dt6[,.(Departures=.N),by=.(Origin)]
+    dt6<-dt6[order(Departures,decreasing = T)]
+    dt7<- flights[Dest %in% c('LGA','JFK','EWR')&Year %in% x& Month %in% y]
+    dt7<-dt7[,.(Arrivals=.N),by=.(Dest)]
+    dt7<-dt7[order(Arrivals,decreasing = T)]
+    dt8<-merge.data.table(dt6,dt7,by.x=c('Origin'),by.y=c('Dest'),all=T)
+    names(dt8)<-c('Airport','Departures','Arrivals')
+    dt8<-dt8[,c(2,1,3)]
+    #podzial ze wzgledu na przyloty odloty 
+    dt9<-dt8[,.(AllFlights=Departures+Arrivals),by=Airport]
+    #razem loty suma przylotow odlotow 
+    pie(dt9$AllFlights,labels=dt9$Airport,col=c('skyblue','lightblue','blue'))
+
+```
+
+## **6) Natezenie ruchu lotniczego w latach 2001-2007 (w shiny)**
+
+```{r pressure, echo=FALSE, message=FALSE, warning=FALSE}
+
+    dt10<- flights[Year %in% x,.(Arrivals=.N),by=Dest]
+    dt10<-dt10[order(Arrivals,decreasing = T)]
+    
+    dt11<-flights[Year %in% x,.(Departures=.N),by=Origin]
+    dt11<-dt11[order(Departures,decreasing = T)]
+    
+    ruch<-merge.data.table(dt10,dt11,by.x='Dest',by.y='Origin',all = T)
+    ruch[,lot:=Arrivals+Departures]
+    ruch[,Arrivals:=NULL]
+    ruch[,Departures:=NULL]
+    names(ruch)<-c('Location','flight')
+    
+    ruch_spec<- merge.data.table(ruch,airregion,by.x='Location',by.y='iata_code',all.x = T,all.y = F)
+    ruch_spec<-ruch_spec[,.(flight,name.x)]
+    names(ruch_spec)<-c('flight_num','region')
+    ruch_spec<-ruch_spec[,.(flight_num=sum(flight_num)),by=region]
+    ruch_spec<-ruch_spec[which(region!='(unassigned)')]
+    ruch_spec[,region:=tolower(region)]
+    mapa<-as.data.table(map_data('state'))
+    mapa_info<-merge.data.table(mapa,ruch_spec,by='region',all.x=T)
+  
+    ggplot(mapa_info, aes(x=long,y = lat, group = group, fill = flight_num))+geom_polygon(color = "gray") +scale_fill_gradient(low = "blue", high = "red")
+  
+    
+```
+
+## Źródła:
+https://aspm.faa.gov/aspmhelp/index/ASQP__Carrier_Codes_and_Names.html  
+https://en.wikipedia.org/wiki/Trans_World_Airlines  
+https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/HG7NV7  
+https://ourairports.com/data/
