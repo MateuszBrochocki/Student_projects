@@ -10,6 +10,7 @@ The repository contains the following files/folders.
 - The *Kod_klasteryzacja.ipynb* notebook, which contains the Python implementations of the experiments described in Checkpoint, excluding the part concerning support for supervised learning.
 - The *Kod_klasteryzacja_nadz.ipynb* notebook, which contains the Python implementations of the experiments concerning support for supervised learning.
 - The *Data* folder contains 14 files with the .gz extension describing 7 synthetic datasets from the *clustbench* package (each dataset described by observation coordinates and their associated labels) and two files with the .csv extension containing real-world data on goalkeepers and social media users.
+-  Markdown file CHECKPOINT.md, which contains an extended description of the project, including a breakdown of individual experiments.
 - *Prezentacja_klasteyzacja.pdf* containing a short summary of the project in the form of a 15-minute presentation.
 - *Raport_klasteryzacja.pdf* containing a 57-page report on all experiments performed in the project, along with the results and conclusions.
 
