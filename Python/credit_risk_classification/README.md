@@ -1,15 +1,10 @@
 # Wizualizacja dotycząca transportu kolejowego pasażerskiego w Polsce
 
-## Opis i screeny
+## Descritpion
 
-Aplikacja podzielona jest na trzy zakładki. Pierwsza z nich opisuje sytuację kolei z podziałem na województwa. Druga odnosi się linii kolejowych, zaś trzecia do opóźnień. Każda z nich zawiera interaktywne wykresy umożliwiające pogłębioną eksplorację danych.
+The aim of our project was to create a model that will best predict the credit risk of customers of a certain bank and classify them into one of two groups: Good or Bad.
+In this project, we used variable selection, transformation, and scaling, and missing data replenishment. We built simple and ensemble models and assessed their prediction quality on a test set using the balanced accuracy metric. Details are described in the report.
 
-![Zrzut3](Zrzut3.png)
+## Authors
 
-![Zrzut4](Zrzut4.png)
-
-![Zrzut1](Zrzut1.png)![Zrzut2](Zrzut2.png)
-
-## Źródła
-
-Dane czerpaliśmy ze strony Urzędu Transportu Kolejowego: https://dane.utk.gov.pl/
+Mateusz Brochocki
