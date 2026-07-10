@@ -1,15 +1,11 @@
-# Wizualizacja dotycząca transportu kolejowego pasażerskiego w Polsce
+# Visualization of passenger rail transport in Poland
 
-## Opis i screeny
+## Description
 
-Aplikacja podzielona jest na trzy zakładki. Pierwsza z nich opisuje sytuację kolei z podziałem na województwa. Druga odnosi się linii kolejowych, zaś trzecia do opóźnień. Każda z nich zawiera interaktywne wykresy umożliwiające pogłębioną eksplorację danych.
+Aplikacja podzielona jest na trzy zakładki. The first section describes the railway situation by province. The second covers railway lines, and the third covers delays. Each section includes interactive charts enabling in-depth data exploration. The project was made in RStudio.
 
-![Zrzut3](Zrzut3.png)
+## Authors
+Kacper Bagiński, Mateusz Brochocki, Michał Wołczyk 
 
-![Zrzut4](Zrzut4.png)
-
-![Zrzut1](Zrzut1.png)![Zrzut2](Zrzut2.png)
-
-## Źródła
-
-Dane czerpaliśmy ze strony Urzędu Transportu Kolejowego: https://dane.utk.gov.pl/
+## Source
+https://dane.utk.gov.pl/
