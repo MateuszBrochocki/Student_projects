@@ -7,8 +7,8 @@ The discussion will be divided into several areas related to cluster analysis. S
 The repository contains the following files/folders.
 - The *cluster_master* folder contains one file of the same name with the .py extension, which contains the Python implementation of the above-mentioned metrics.
 - The *Code* folder contains two files with the .ipynb extension:
-- The *Kod_klasteryzacja.ipynb* notebook, which contains the Python implementations of the experiments described in Checkpoint, excluding the part concerning support for supervised learning.
-- The *Kod_klasteryzacja_nadz.ipynb* notebook, which contains the Python implementations of the experiments concerning support for supervised learning.
+  - The *Kod_klasteryzacja.ipynb* notebook, which contains the Python implementations of the experiments described in Checkpoint, excluding the part concerning support for supervised learning.
+  - The *Kod_klasteryzacja_nadz.ipynb* notebook, which contains the Python implementations of the experiments concerning support for supervised learning.
 - The *Data* folder contains 14 files with the .gz extension describing 7 synthetic datasets from the *clustbench* package (each dataset described by observation coordinates and their associated labels) and two files with the .csv extension containing real-world data on goalkeepers and social media users.
 -  Markdown file CHECKPOINT.md, which contains an extended description of the project, including a breakdown of individual experiments.
 - *Prezentacja_klasteyzacja.pdf* containing a short summary of the project in the form of a 15-minute presentation.
