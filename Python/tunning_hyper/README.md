@@ -1,15 +1,9 @@
-# Wizualizacja dotycząca transportu kolejowego pasażerskiego w Polsce
+# Testing the tunability of hyperparameters in Logistic Regression, kNN, and XGBoost Models
 
-## Opis i screeny
+## Descritpion
 
-Aplikacja podzielona jest na trzy zakładki. Pierwsza z nich opisuje sytuację kolei z podziałem na województwa. Druga odnosi się linii kolejowych, zaś trzecia do opóźnień. Każda z nich zawiera interaktywne wykresy umożliwiające pogłębioną eksplorację danych.
+The aim of this paper is to analyze the tunability of three machine learning algorithms: logistic regression with *Elasticnet* regularization, k-nearest neighbors, and *XGboost*, on fifteen different medium-sized datasets containing several hundred to several thousand observations and several to several dozen explanatory variables. The RandomSearchCV method and Bayesian optimization from the *optuna* package were used to tune the models. Details and results are described in the report.
 
-![Zrzut3](Zrzut3.png)
+## Authors
 
-![Zrzut4](Zrzut4.png)
-
-![Zrzut1](Zrzut1.png)![Zrzut2](Zrzut2.png)
-
-## Źródła
-
-Dane czerpaliśmy ze strony Urzędu Transportu Kolejowego: https://dane.utk.gov.pl/
+Mateusz Brochocki, Aleksander Karch, Adrian Krzyżanowski
