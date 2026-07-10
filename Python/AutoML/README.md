@@ -1,15 +1,8 @@
-# Wizualizacja dotycząca transportu kolejowego pasażerskiego w Polsce
+# Miniature version of AutoML for the binary classification problem
 
-## Opis i screeny
+## Description
 
-Aplikacja podzielona jest na trzy zakładki. Pierwsza z nich opisuje sytuację kolei z podziałem na województwa. Druga odnosi się linii kolejowych, zaś trzecia do opóźnień. Każda z nich zawiera interaktywne wykresy umożliwiające pogłębioną eksplorację danych.
+The project's goal was to create a miniature version of the AutoML system, designed to automatically solve the binary classification problem. The system will utilize the portfolio concept, consisting of pre-built models with previously optimized hyperparameters. The system will contain 50 models and will also utilize preprocessing and reassembling techniques to improve prediction quality.
 
-![Zrzut3](Zrzut3.png)
-
-![Zrzut4](Zrzut4.png)
-
-![Zrzut1](Zrzut1.png)![Zrzut2](Zrzut2.png)
-
-## Źródła
-
-Dane czerpaliśmy ze strony Urzędu Transportu Kolejowego: https://dane.utk.gov.pl/
+## Authors
+Mateusz Brochocki, Aleksander Karch, Adrian Krzyżanowski
