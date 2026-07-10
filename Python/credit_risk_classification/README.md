@@ -1,4 +1,4 @@
-# Wizualizacja dotycząca transportu kolejowego pasażerskiego w Polsce
+# Credit risk classification model
 
 ## Descritpion
 
