@@ -6,11 +6,10 @@ Rozważania zostaną podzielone na kilka obszarów związancyh z analizą skupie
 
 W repozytoriutm znajdują się następujące pliki/foldery.
 - Folder *cluster_master* posiadający jeden plik, o tej samej nazwie, z roszerzeniem .py, który zawiera implementację wyżej wymienionych metryk w Pythonie.
-- Folder *kody*, który posiada dwa pliki z roszerzeniem .ipynb:
+- Folder *Code*, który posiada dwa pliki z roszerzeniem .ipynb:
   - notatnik *Kod_klasteryzacja.ipynb*, który zawiera implementacje w Pythonie, opisanych w Checkpoincie, eksperymentów z wyłączeniem części dotyczącej wsparcia w uczeniu nadzorowanym,
   - notatnik *Kod_klasteryzacja_nadz.ipynb*, który zawiera implementacje w Pythonie eksperymentów dotyczących wsparcia w uczeniu nadzorowanym.
-- Folder *zmum_data* posiadający 14 plików z rozszerzeniem .gz opisujące 7 syntetycznych zbiorów z pakietu *clustbench* (każdy zbiór opisany przez współrzędne obserwacji oraz przypisane im odpowiednie etykiety) oraz 2 pliki z rozszerzeniem .csv zawierające dane rzeczywiste dotyczące bramkarzy oraz użytkowników social mediów.  
-- Markdownowy plik *CHECKPOINT.md*, który zawiera rozszerzony opis projektu wraz z podziałem na poszczególne eksperymenty.
+- Folder *Data* posiadający 14 plików z rozszerzeniem .gz opisujące 7 syntetycznych zbiorów z pakietu *clustbench* (każdy zbiór opisany przez współrzędne obserwacji oraz przypisane im odpowiednie etykiety) oraz 2 pliki z rozszerzeniem .csv zawierające dane rzeczywiste dotyczące bramkarzy oraz użytkowników social mediów.  
 - Plik *Prezentacja_klasteyzacja.pdf* zawierający krótkie podsumowanie projektu w postaci 15-minutowej prezentacji.
 - Plik *Raport_klasteryzacja* zawierający 57-stronnicowy raport dotyczący wszystkich wykonanych w projekcie eksperymentów wraz z wynikami i wnioskami.
 
